@@ -1,16 +1,16 @@
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function MainContent() {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto px-4 py-10">
       {/* Banner Image */}
       <div className="w-full flex justify-center mb-6">
         <img
-          src="/assets/ASD-Banner.jpg"
+          src="/assets/ASD-Banner03.jpg"
           alt="Autism Awareness"
-          className="w-full max-h-50 object-cover rounded-lg shadow-md"
+          className="w-full max-h-60 object-cover rounded-lg shadow-md"
         />
       </div>
 
@@ -19,7 +19,7 @@ export default function MainContent() {
         {/* Text Content */}
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-4xl font-bold text-blue-600 mb-6">
-            Autism Spectrum Disorder (ASD) Detection
+            Autism Spectrum Disorder (ASD) Prediction
           </h1>
           <p className="text-lg text-gray-700">
             Autism Spectrum Disorder (ASD) is a developmental condition affecting communication, behavior, and social interaction. Early detection is crucial for effective intervention and support.
@@ -30,7 +30,7 @@ export default function MainContent() {
 
           {/* Start Questionnaire Button */}
           <button
-            //onClick={() => navigate("/questionnaire")}
+            onClick={() => navigate("/questions")}
             className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300"
           >
             Start Questionnaire

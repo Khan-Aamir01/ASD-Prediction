@@ -4,7 +4,7 @@ export default function Footer() {
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
           
           {/* Logo / Brand Name */}
-          <div className="text-lg font-bold">ASD Detection</div>
+          <div className="text-lg font-bold">ASD Prediction</div>
   
           {/* Navigation Links */}
           <div className="flex space-x-6 mt-4 md:mt-0">
@@ -25,7 +25,7 @@ export default function Footer() {
   
         {/* Copyright */}
         <div className="text-center text-sm text-gray-400 mt-4">
-          © {new Date().getFullYear()} ASD Detection. All Rights Reserved.
+          © {new Date().getFullYear()} Thousand Sunny &#128526;. All Rights Reserved.
         </div>
       </footer>
     );
