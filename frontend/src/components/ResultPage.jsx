@@ -1,22 +1,45 @@
+import { useEffect, useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import AutismContext from "../components/AutismContext";
 
 export default function Result() {
   const location = useLocation();
   const navigate = useNavigate();
-  const responses = location.state?.responses || {}; // Get responses passed from Questionnaire
+  const { submitAnswers, probability, loading, error } = useContext(AutismContext);
 
-  // Example: Simple logic to count "Yes" responses (Modify based on ML output)
-  const yesCount = Object.values(responses).filter((answer) => answer === "Yes").length;
-  const resultText =
-    yesCount >= 8
-      ? "High possibility of Autism Spectrum Disorder. Please consult a professional."
-      : "Low risk of Autism, but consulting a doctor for further analysis is advised.";
+  // Get responses from previous page
+  const responses = location.state?.responses || {};
+
+  // Convert "Yes"/"No" answers into 1/0 format
+  //const answersArray = useMemo(
+   // () => Object.values(responses).map((answer) => (answer === "Yes" ? 1 : 0)),
+  //  [responses]
+  //);
+
+  // Send answers to Flask API when the component mounts
+  //useEffect(() => { // Potential Issue Here
+   // if (answersArray.length === 10 && submitAnswers) {
+   //   submitAnswers(answersArray); 
+   // }
+  //}, [answersArray, submitAnswers]);
 
   return (
     <div className="container mx-auto px-4 py-10 text-center">
       <h1 className="text-3xl font-bold text-blue-600">Assessment Result</h1>
-      <p className="mt-4 text-lg text-gray-700">{resultText}</p>
-      
+
+      {loading && <p className="text-lg text-gray-700">Analyzing responses...</p>}
+      {error && <p className="text-red-600 font-semibold">{error}</p>}
+
+      {probability !== null && (
+        <div>
+          <h2 className="mt-4 text-2xl font-semibold text-gray-800">Autism Probability: {probability}%</h2>
+          <p className="mt-4 text-lg text-gray-700">
+            {probability >= 50
+              ? "High possibility of Autism Spectrum Disorder. Please consult a professional."
+              : "Low risk of Autism, but consulting a doctor for further analysis is advised."}
+          </p>
+        </div>
+      )}
 
       <button
         onClick={() => navigate("/")}
@@ -24,11 +47,12 @@ export default function Result() {
       >
         Go to Home
       </button>
-      {/* Development Phase Disclaimer */}
+
       <p className="mt-4 text-red-600 font-semibold">
-        This website is still in the development phase, and the result is currently hardcoded.
+        This website is still in the development phase. The results are based on an ML model and are not a medical diagnosis.
       </p>
-      
     </div>
   );
 }
+
+
