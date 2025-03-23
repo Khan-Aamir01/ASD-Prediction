@@ -10,14 +10,14 @@ export default function Questions() {
   const questions = [
     "Do you find it difficult to maintain eye contact during conversations?",
     "Do you have trouble understanding social cues (like tone of voice or facial expressions)?",
-    "Do you prefer routines and get anxious with unexpected changes?",
-    "Do you have difficulty making or maintaining friendships?",
+    "Do you prefer doing things the same way every time?",
+    "Do you find it difficult to make new friends?",
     "Do you get deeply focused on specific interests or hobbies?",
     "Do you often feel overwhelmed in loud or crowded places?",
     "Do you have a tendency to repeat words or phrases (echolalia)?",
     "Do you struggle with understanding sarcasm or jokes?",
     "Do you find it difficult to express your emotions to others?",
-    "Do you feel uncomfortable with physical touch or certain textures?",
+    "Do you prefer to work alone rather than with others?",
     //"Do you have a strong preference for sameness in your daily activities?",
     //"Do you experience sensory sensitivities (e.g., bright lights, loud noises)?",
     //"Do you have trouble starting or maintaining conversations?",
@@ -26,26 +26,28 @@ export default function Questions() {
   ];
 
   const handleChange = (index, value) => {
-    setResponses({ ...responses, [index]: value });
+    // Update the local responses state immediately
+    setResponses((prevResponses) => {
+      const updatedResponses = { ...prevResponses, [index]: value };
+      // Update the context state (answers array) whenever an answer changes
+      updateAnswer(index, value); // Call updateAnswer with the current index and value
+      return updatedResponses;
+    });
   };
 
   const handleSubmit = () => {
-    // Ensure all 15 questions are answered
+    // Ensure all 10 questions are answered
     if (Object.keys(responses).length < 10) {
       alert("Please answer all questions before submitting.");
       return;
     }
 
-    // Convert responses into a numerical array for ML model
-    const answersArray = questions.map((_, index) =>
-      responses[index] === "Yes" ? 1 : responses[index] === "No" ? 0 : 0.5 // Assuming "Not Sure" = 0.5
-    );
+    // Optionally, you can send the updated responses to the ML model or do other actions
+    console.log("User Responses:", responses);
 
-    console.log("User Responses:", answersArray);
-    updateAnswer(answersArray);
-    submitAnswers(answersArray); // Send to ML model via AutismContext
-
+    // Optionally navigate to the results page
     navigate("/result", { state: { responses } });
+    submitAnswers();
   };
 
   return (
@@ -60,7 +62,7 @@ export default function Questions() {
             <div key={index} className="mb-4">
               <p className="text-lg font-medium text-gray-800">{index + 1}. {question}</p>
               <div className="flex gap-4 mt-2">
-                {["Yes", "No", "Not Sure"].map((option) => (
+                {["Yes", "No"].map((option) => (
                   <label key={option} className="flex items-center">
                     <input
                       type="radio"
