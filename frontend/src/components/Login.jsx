@@ -10,7 +10,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       const response = await fetch("http://127.0.0.1:5000/api/login", {
         method: "POST",
@@ -19,13 +19,22 @@ export default function Login() {
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
-        window.dispatchEvent(new Event("storage")); // Trigger navbar update
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            name: data.user.name,
+            email: data.user.email,
+            gender: data.user.gender,
+            dob: data.user.dob,
+            ethnicity: data.user.ethnicity,
+          })
+        );
+        window.dispatchEvent(new Event("storage")); // Update Navbar
         navigate("/");
       } else {
         setError(data.error || "Login failed");

@@ -46,7 +46,6 @@ def update_user(user_id):
 def delete_user(user_id):
     return jsonify({"deleted": user_controller.delete_user(user_id)})
 
-# ✅ New Login Route
 @user_routes.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -75,9 +74,13 @@ def login():
         "token": token,
         "user": {
             "name": user["name"],
-            "email": user["email"]
+            "email": user["email"],
+            "gender": user.get("gender", "Not specified"),
+            "dob": user.get("dob", "Not specified"),
+            "ethnicity": user.get("ethnicity", "Not specified")
         }
     }), 200
+
 
 @user_routes.route("/user", methods=["GET"])
 def get_user():

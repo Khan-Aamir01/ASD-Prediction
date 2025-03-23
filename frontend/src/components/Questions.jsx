@@ -45,7 +45,6 @@ export default function Questions() {
     // Optionally, you can send the updated responses to the ML model or do other actions
     console.log("User Responses:", responses);
 
-    // Optionally navigate to the results page
     submitAnswers(answers);
     navigate("/result", { state: { responses } });
     

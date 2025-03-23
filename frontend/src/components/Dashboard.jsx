@@ -41,7 +41,10 @@ const Dashboard = () => {
                   <strong>Latest ASD Test Result:</strong> {Number(user.result.score).toFixed(2)}%
                 </p>
                 <p className="text-sm text-gray-500">
-                  <strong>Date:</strong> {user.result.date ? new Date(user.result.date).toLocaleString() : "Not Available"}
+                  <strong>Date:</strong>{" "}
+                  {user.result.date
+                    ? new Date(new Date(user.result.date).getTime() + 5 * 60 * 60 * 1000 + 3 * 60 * 1000).toLocaleString()
+                    : "Not Available"}
                 </p>
               </div>
             ) : (
