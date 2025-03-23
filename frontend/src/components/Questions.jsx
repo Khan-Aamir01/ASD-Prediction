@@ -5,7 +5,7 @@ import AutismContext from "../components/AutismContext";
 export default function Questions() {
   const [responses, setResponses] = useState({});
   const navigate = useNavigate();
-  const { submitAnswers ,updateAnswer } = useContext(AutismContext);
+  const { submitAnswers ,updateAnswer,answers } = useContext(AutismContext);
 
   const questions = [
     "Do you find it difficult to maintain eye contact during conversations?",
@@ -46,8 +46,9 @@ export default function Questions() {
     console.log("User Responses:", responses);
 
     // Optionally navigate to the results page
+    submitAnswers(answers);
     navigate("/result", { state: { responses } });
-    submitAnswers();
+    
   };
 
   return (

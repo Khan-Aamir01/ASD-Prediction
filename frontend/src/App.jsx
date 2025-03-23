@@ -10,7 +10,6 @@ import About from "./components/About";
 import Services from "./components/Services";
 import Contact from "./components/Contact";
 import Dashboard from "./components/dashboard";
-
 function App() {
   return (
     <Router>

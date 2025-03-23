@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuthCheck from "../components/utils/useAuthCheck";
 
 export default function Navbar() {
+  useAuthCheck();
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
