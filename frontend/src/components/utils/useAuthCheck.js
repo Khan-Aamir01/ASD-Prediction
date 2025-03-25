@@ -2,30 +2,39 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // Install using `npm install jwt-decode`
 
-const useAuthCheck = () => {
+const useAuthCheck = (logoutCallback) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(token); // Decode JWT
-        const currentTime = Date.now() / 1000; // Get current time in seconds
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          const currentTime = Date.now() / 1000; // Convert to seconds
 
-        if (decoded.exp < currentTime) {
-          // Token expired
-          localStorage.removeItem("token"); // Remove token
-          alert("Session expired. Please log in again.");
-          navigate("/login"); // Redirect to login page
+          if (decoded.exp < currentTime) {
+            // Token expired
+            localStorage.removeItem("token");
+            alert("Session expired. Please log in again.");
+            logoutCallback(); // Trigger logout function
+          }
+        } catch (error) {
+          console.error("Invalid token:", error);
+          localStorage.removeItem("token");
+          logoutCallback(); // Handle invalid token
         }
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem("token"); // Remove token if invalid
-        navigate("/login");
       }
-    }
-  }, []); // Runs only once when component mounts
+    };
+
+    checkAuth(); // Run on mount
+
+    const interval = setInterval(checkAuth, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [logoutCallback]);
+
 };
 
 export default useAuthCheck;

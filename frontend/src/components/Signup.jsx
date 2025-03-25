@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios for API calls
+import axios from "axios";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -12,8 +12,41 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^[a-zA-Z0-9@#_-]{6,}$/; // At least 6 chars, no weird symbols
+    return passwordRegex.test(password);
+  };
+
+  const validateDob = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    return age >= 10 && age <= 80;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateEmail(email)) {
+      alert("Invalid email format!");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      alert("Password must be at least 6 characters long and contain only letters, numbers, @, #, _, or -.");
+      return;
+    }
+
+    if (!validateDob(dob)) {
+      alert("Age must be between 10 and 80 years old.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -28,8 +61,15 @@ export default function Signup() {
         navigate("/login");
       }
     } catch (error) {
-      console.error("Signup error:", error.response?.data || error.message);
-      alert(error.response?.data?.error || "Signup failed. Please try again.");
+      const errorMessage = error.response?.data?.error || "Signup failed. Please try again.";
+
+      if (errorMessage.includes("User already exists")) {
+        if (window.confirm("User already exists! Do you want to log in instead?")) {
+          navigate("/login");
+        }
+      } else {
+        alert(errorMessage);
+      }
     }
   };
 
@@ -91,14 +131,8 @@ export default function Signup() {
             Sign Up
           </button>
         </form>
-
-        <p className="mt-4 text-center">
-          Already have an account? {" "}
-          <span onClick={() => navigate("/login")} className="text-blue-600 cursor-pointer hover:underline">
-            Login
-          </span>
-        </p>
       </div>
     </div>
   );
 }
+

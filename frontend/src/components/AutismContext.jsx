@@ -14,11 +14,7 @@ export const AutismProvider = ({ children }) => {
     newAnswers[index] = value;
     setAnswers(newAnswers);
 
-    // ✅ Submit only when all 10 answers are filled
-    //if(index==9){
-    //  submitAnswers(answers);
-    //}
-  };
+  }
 
   // Function to submit answers and update probability
   const submitAnswers = async (answersData) => {

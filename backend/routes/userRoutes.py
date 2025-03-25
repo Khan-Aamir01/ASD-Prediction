@@ -3,29 +3,32 @@ import datetime
 from flask import Blueprint, request, jsonify
 from controllers.userController import UserController
 from werkzeug.security import check_password_hash
-from bson import ObjectId  # ✅ Import ObjectId
+from bson import ObjectId  
 
-SECRET_KEY = "GEAR5"  # Replace with a secure key
+SECRET_KEY = "GEAR5"  
 
 user_routes = Blueprint("user_routes", __name__)
-user_controller = None  # Will be initialized later
+user_controller = None  
 
 def init_user_routes(db):
     global user_controller
-    user_controller = UserController(db)
+    user_controller = UserController(db,SECRET_KEY)
 
-@user_routes.route("/users", methods=["GET"])
-def get_users():
-    return jsonify(user_controller.get_users())
-
-@user_routes.route("/users", methods=["POST"])
+@user_routes.route("/users", methods=["POST"]) #for sign up
 def add_user():
     data = request.get_json()
     required_fields = ["name", "email", "password", "gender", "dob", "ethnicity"]
 
+    
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
 
+    # Check if user already exists
+    existing_user = user_controller.get_user_by_email(data["email"])
+    if existing_user:
+        return jsonify({"error": "User already exists. Please log in."}), 400
+
+    # Create new user
     user_id = user_controller.add_user(
         name=data["name"],
         email=data["email"],
@@ -37,16 +40,7 @@ def add_user():
 
     return jsonify({"message": "User created successfully", "user_id": user_id}), 201
 
-@user_routes.route("/users/<user_id>", methods=["PUT"])
-def update_user(user_id):
-    data = request.json
-    return jsonify({"updated": user_controller.update_user(user_id, data)})
-
-@user_routes.route("/users/<user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    return jsonify({"deleted": user_controller.delete_user(user_id)})
-
-@user_routes.route("/login", methods=["POST"])
+@user_routes.route("/login", methods=["POST"]) # for login and token generation
 def login():
     data = request.get_json()
     email = data.get("email")
@@ -63,7 +57,7 @@ def login():
 
     # Generate JWT token
     token = jwt.encode(
-        {"user_id": str(user["_id"]), "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=12)},
+        {"user_id": str(user["_id"]), "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7)},
         SECRET_KEY,
         algorithm="HS256"
     )
@@ -82,7 +76,7 @@ def login():
     }), 200
 
 
-@user_routes.route("/user", methods=["GET"])
+@user_routes.route("/user", methods=["GET"]) # Use by Dashboard to display user info
 def get_user():
     token = request.headers.get("Authorization")
     if not token:
@@ -112,22 +106,7 @@ def get_user():
     except jwt.DecodeError:
         return jsonify({"error": "Invalid token"}), 401
 
-# ✅ New Route to Update ASD Test Result
-@user_routes.route("/users/<user_id>/result", methods=["PUT"])
-def update_result(user_id):
-    data = request.get_json()
-    result = data.get("result")
-
-    if result is None:
-        return jsonify({"error": "Result is required"}), 400
-
-    updated = user_controller.update_result(user_id, result)
-
-    if updated:
-        return jsonify({"message": "Result updated successfully"}), 200
-    return jsonify({"error": "User not found or update failed"}), 404
-
-@user_routes.route("/users/me/result", methods=["PUT"])
+@user_routes.route("/users/me/result", methods=["PUT"]) # To Save Result in DB when submit Question
 def save_test_result():
     token = request.headers.get("Authorization")
     if not token:
@@ -155,4 +134,33 @@ def save_test_result():
     except jwt.DecodeError:
         return jsonify({"error": "Invalid token"}), 401
     except Exception as e:
-        return jsonify({"error": str(e)}), 500  
+        return jsonify({"error": str(e)}), 500
+
+# NO USE APIs
+@user_routes.route("/users", methods=["GET"]) #No Use
+def get_users():
+    return jsonify(user_controller.get_users())
+
+@user_routes.route("/users/<user_id>", methods=["PUT"]) #No Use
+def update_user(user_id):
+    data = request.json
+    return jsonify({"updated": user_controller.update_user(user_id, data)})
+
+@user_routes.route("/users/<user_id>", methods=["DELETE"]) #No Use
+def delete_user(user_id):
+    return jsonify({"deleted": user_controller.delete_user(user_id)})
+
+
+@user_routes.route("/users/<user_id>/result", methods=["PUT"]) #No Use
+def update_result(user_id):
+    data = request.get_json()
+    result = data.get("result")
+
+    if result is None:
+        return jsonify({"error": "Result is required"}), 400
+
+    updated = user_controller.update_result(user_id, result)
+
+    if updated:
+        return jsonify({"message": "Result updated successfully"}), 200
+    return jsonify({"error": "User not found or update failed"}), 404    
