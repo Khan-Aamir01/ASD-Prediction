@@ -8,9 +8,9 @@ export default function MainContent() {
       {/* Banner Image */}
       <div className="w-full flex justify-center mb-6">
         <img
-          src="/assets/ASD-Banner03.jpg"
+          src="/assets/ASD-Banner03.png"
           alt="Autism Awareness"
-          className="w-full max-h-60 object-cover rounded-lg shadow-md"
+          className="w-full max-h-75 object-cover object-center rounded-lg shadow-md"
         />
       </div>
 
@@ -25,7 +25,7 @@ export default function MainContent() {
             Autism Spectrum Disorder (ASD) is a developmental condition affecting communication, behavior, and social interaction. Early detection is crucial for effective intervention and support.
           </p>
           <p className="mt-4 text-lg text-gray-700">
-            Click the button below to start the **questionnaire**, which consists of 15-20 questions. Based on your responses, our model will provide an assessment.
+            Click the button below to start the **questionnaire**, which consists of 10 questions. Based on your responses, our model will provide an assessment.
           </p>
 
           {/* Start Questionnaire Button */}
